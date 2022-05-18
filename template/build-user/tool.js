@@ -3,18 +3,18 @@ const glob = require('glob');
 const buildConfig = require('./config');
 const root = path.resolve(__dirname, '../src/view/');
 
-const getMulu = function (filePath) {
+const getMulu = function(filePath) {
   const filename1 = filePath.substring(0, filePath.lastIndexOf('/'));
   const filename2 = filename1.substring(filename1.lastIndexOf('/') + 1);
 
   return filename2;
 };
 
-module.exports.getPages = function () {
+module.exports.getPages = function() {
   const entryFiles = glob.sync(root + '/*/main.ts');
   const map = {};
 
-  entryFiles.forEach((filePath) => {
+  entryFiles.forEach(filePath => {
     const filename = getMulu(filePath);
     let filenameStr = '';
 
@@ -46,8 +46,8 @@ module.exports.getPages = function () {
         removeComments: true,
         collapseWhitespace: true,
         minifyCSS: true,
-        minifyJS: true,
-      },
+        minifyJS: true
+      }
     };
   });
   return map;

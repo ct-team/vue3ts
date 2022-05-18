@@ -1,24 +1,23 @@
-# vue4
+## 配置文件
 
-## Project setup
-```
-npm install
-```
+build-user/config.js
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 多页面形式
 
-### Compiles and minifies for production
-```
-npm run build
-```
+src/view 里建立文件夹 里面包含 main.ts
+public/view 里建立页面文件 
 
-### Lints and fixes files
+demo:
+建立一个 index.html
 ```
-npm run lint
+publick/view/
+    index/
+        index.ejs
+src/view/
+    index/
+        main.ts
+        app.vue
 ```
+## static
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+ejs页面上 使用 `./assets/`的形式可以调用的静态资源

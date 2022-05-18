@@ -1,22 +1,12 @@
 module.exports = {
-  presets: ['@vue/cli-plugin-babel/preset'],
+  presets: ['@vue/app'],
   plugins: [
     [
-      'import',
+      'component',
       {
-        libraryName: 'vant',
-        libraryDirectory: 'es',
-        style: true,
-      },
-    ],
-    [
-      'import',
-      {
-        libraryName: 'nat-plus',
-        libraryDirectory: 'lib',
-        style: false,
-      },
-      'nat-plus',
-    ],
-  ],
+        libraryName: 'ct-dart',
+        styleLibraryName: 'style'
+      }
+    ]
+  ]
 };

@@ -3,8 +3,6 @@ const buildTool = require('./build-user/tool');
 const buildCopy = require('./build-user/copy');
 const IS_PROD = process.env.NODE_ENV === 'production';
 const autoprefixer = require('autoprefixer');
-const tsImportPluginFactory = require('ts-import-plugin');
-const merge = require('webpack-merge');
 
 module.exports = {
   //lintOnSave: true,
@@ -14,67 +12,51 @@ module.exports = {
   productionSourceMap: false,
   css: {
     extract: IS_PROD, // 允许生成 CSS source maps?
-    sourceMap: false, // pass custom options to pre-processor loaders. e.g. to pass options to // sass-loader, use { sass: { ... } }
+    sourceMap: false // pass custom options to pre-processor loaders. e.g. to pass options to // sass-loader, use { sass: { ... } }
     //requireModuleExtension: false,
-    loaderOptions: {
-      sass: {
-        // 向全局sass样式传入共享的全局变量 （新版本sass-loader的参数改变）
-        prependData: buildConfig.globalSass,
-      },
-      postcss: {
-        plugins: [
-          autoprefixer({
-            overrideBrowserslist: ['iOS >= 8', 'Android >= 4.0'],
-          }),
-          require('postcss-pxtorem')(buildConfig.px2rem),
-        ],
-      },
-    },
+    // loaderOptions: {
+    //   postcss: {
+    //     plugins: [
+    //       autoprefixer({
+    //         overrideBrowserslist: ['> 1%', 'last 2 versions']
+    //       })
+    //       //require('postcss-pxtorem')(buildConfig.px2rem)
+    //     ]
+    //   }
+    // }
   },
   // 所有 webpack-dev-server 的选项都支持。
   devServer: buildConfig.devServer,
-  configureWebpack: (config) => {
+  configureWebpack: config => {
+    config.devtool = 'source-map';
+
+    config.externals = {
+      vue: 'Vue',
+      'vue-router': 'VueRouter',
+      vuex: 'Vuex',
+      axios: 'axios',
+      'element-ui': 'ELEMENT'
+    };
     if (process.env.NODE_ENV === 'production') {
       config.plugins.push({
-        apply: (compilation) => {
+        apply: compilation => {
           compilation.hooks.done.tap('succeedModule', () => {
             buildCopy.init();
           });
-        },
+        }
       });
     }
   },
   pluginOptions: {
     webpackBundleAnalyzer: {
-      //analyzerMode: 'static',
-      openAnalyzer: false,
-    },
+      analyzerMode: 'static',
+      openAnalyzer: false
+    }
   },
-  chainWebpack: (config) => {
-    config.plugin('define').tap((args) => {
+  chainWebpack: config => {
+    config.plugin('define').tap(args => {
       args[0]['process.env'].BUCheckAppId = `"${buildConfig.checkAppId}"`;
       return args;
     });
-    config.module
-      .rule('ts')
-      .use('ts-loader')
-      .tap((options) => {
-        options = merge(options, {
-          transpileOnly: true,
-          getCustomTransformers: () => ({
-            before: [
-              tsImportPluginFactory({
-                libraryName: 'vant',
-                libraryDirectory: 'es',
-                style: true,
-              }),
-            ],
-          }),
-          compilerOptions: {
-            module: 'es2015',
-          },
-        });
-        return options;
-      });
-  },
+  }
 };

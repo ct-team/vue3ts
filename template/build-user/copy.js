@@ -6,8 +6,8 @@ const list = config.list;
 
 const src = path.join(__dirname, '../dist/dest');
 const root = path.resolve(__dirname, '../dist');
-
-const clearEnv = function (result, env) {
+//
+const clearEnv = function(result, env) {
   const s = '<div[^>]*data-hide-env="?(' + env + ')"?.*?[^>]*>(.*?)</div>';
   const s2 = '<div[^>]*data-hide-env=.*?[^>]*>(.*?)</div>';
   const re = new RegExp(s, 'g');
@@ -16,11 +16,11 @@ const clearEnv = function (result, env) {
   return rs1.replace(re2, '$1');
 };
 
-const clearOtherEnv = function (result, env) {
+const clearOtherEnv = function(result, env) {
   const envList = [];
   let ruleEnv = '';
 
-  list.forEach(function (item) {
+  list.forEach(function(item) {
     if (item.env != env) {
       envList.push(item.env);
     }
@@ -36,15 +36,15 @@ const clearOtherEnv = function (result, env) {
   return rs1.replace(re2, '$1');
 };
 //端口替换
-const portReplace = function (obj) {
+const portReplace = function(obj) {
   //list.forEach(obj => {
   const entryHtml = glob.sync(root + '/' + obj.title + '/**/*.html');
   const publicUrl = obj.url + config.appUrl;
   const baseUrl = publicUrl + 'assets';
   const env = obj.env;
 
-  entryHtml.forEach((f) => {
-    fs.readFile(f, 'utf8', function (err, data) {
+  entryHtml.forEach(f => {
+    fs.readFile(f, 'utf8', function(err, data) {
       if (err) {
         throw err;
       }
@@ -62,10 +62,11 @@ const portReplace = function (obj) {
       );
 
       result = result.replace(/<ctAppPublic>/g, publicUrl);
+
       result = clearEnv(result, env);
       result = clearOtherEnv(result, env);
 
-      fs.writeFile(f, result, 'utf8', function (err) {
+      fs.writeFile(f, result, 'utf8', function(err) {
         if (err) {
           throw err;
         }
@@ -76,11 +77,11 @@ const portReplace = function (obj) {
 };
 
 //拷贝项目
-const copy = function () {
-  list.forEach((obj) => {
+const copy = function() {
+  list.forEach(obj => {
     const url = path.join(__dirname, '../dist/', obj.title);
 
-    fs.copy(src, url, function (err) {
+    fs.copy(src, url, function(err) {
       if (err) {
         throw err;
       }
@@ -90,6 +91,6 @@ const copy = function () {
   });
 };
 
-module.exports.init = function () {
+module.exports.init = function() {
   copy();
 };
